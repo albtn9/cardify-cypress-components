@@ -19,27 +19,22 @@ Cypress.Commands.add('submitCardForm', () => {
 })
 
 describe('<AddCard />', () => {
-   const myCard = {
-      number: '4242424242424242',
-      holderName: 'Fernando Papito',
-      expirationDate: '12/29',
-      cvv: '737',
-      bank: 'neon'
-    }
+
+  const myCard = {
+    number: '4242424242424242',
+    holderName: 'Fernando Papito',
+    expirationDate: '12/35',
+    cvv: '123',
+    bank: 'neon'
+  }
+
   beforeEach(() => {
     cy.viewport(1440, 900)
     cy.mount(<AddCard />)
   })
-  it('exibe erros para campos não informados', () => {
-    // see: https://on.cypress.io/mounting-react
 
+  it('exibe erros quando os campos não são informados', () => {
     cy.submitCardForm()
-
-    // cy.alertErrorHaveText('Número do cartão é obrigatório')
-    // cy.alertErrorHaveText('Nome do titular é obrigatório')
-    // cy.alertErrorHaveText('Data de expiração é obrigatória')
-    // cy.alertErrorHaveText('CVV é obrigatório')
-    // cy.alertErrorHaveText('Selecione um banco')
 
     const alerts = [
       'Número do cartão é obrigatório',
@@ -52,14 +47,8 @@ describe('<AddCard />', () => {
     alerts.forEach((alert) => {
       cy.alertErrorHaveText(alert)
     })
-
-    // cy.contains('.alert-error','Número do cartão é obrigatório').should('be.visible')
-    // cy.contains('.alert-error','Nome do titular é obrigatório').should('be.visible')
-    // cy.contains('.alert-error','Data de expiração é obrigatória').should('be.visible')
-    // cy.contains('.alert-error','CVV é obrigatório').should('be.visible')
-    // cy.contains('.alert-error','Selecione um banco').should('be.visible')
-
   })
+
   it('deve cadastrar um novo cartão de crédito', () => {
     cy.fillCardForm(myCard)
 
@@ -79,25 +68,22 @@ describe('<AddCard />', () => {
       .and('have.text', 'Cartão cadastrado com sucesso!')
   })
 
-  it('valida nome do titular com nome contendo menos que 2 caracteres', () => {
-    cy.fillCardForm({...myCard , holderName: 'F'})
+  it('valida nome do titular com menos de 2 caracteres', () => {
+    cy.fillCardForm({ ...myCard, holderName: 'F' })
     cy.submitCardForm()
+
     cy.alertErrorHaveText('Nome deve ter pelo menos 2 caracteres')
-
   })
-  it('validar data de expiracão invalida', () => {
-    cy.fillCardForm({...myCard , expirationDate:'22/35'})
+
+  it('valida data de expiração inválida', () => {
+    cy.fillCardForm({ ...myCard, expirationDate: '13/35' })
     cy.submitCardForm()
 
     cy.alertErrorHaveText('Data de expiração inválida ou vencida')
   })
-  it('valida cvv contendo menos que 3 caracteres', () => {
-   
-    cy.alertErrorHaveText('Data de expiração inválida ou vencida')
 
-  })
   it('valida CVV com menos de 3 dígitos', () => {
-    cy.fillCardForm({...myCard , cvv:'7'})
+    cy.fillCardForm({ ...myCard, cvv: '1' })
     cy.submitCardForm()
 
     cy.alertErrorHaveText('CVV deve ter 3 ou 4 dígitos')
