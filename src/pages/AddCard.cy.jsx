@@ -98,7 +98,7 @@ describe('<AddCard />', () => {
 
     cy.alertErrorHaveText('Data de expiração inválida ou vencida')
   })
-  it('valida nome do titular com nome contendo menos que 2 caracteres', () => {
+  it('valida cvv contendo menos que 3 caracteres', () => {
    
     cy.fillCardForm({...myCard , cvv:'7'})
 
