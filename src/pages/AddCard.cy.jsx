@@ -59,13 +59,9 @@ describe('<AddCard />', () => {
     // cy.contains('.alert-error','CVV é obrigatório').should('be.visible')
     // cy.contains('.alert-error','Selecione um banco').should('be.visible')
 
-
   })
   it('deve cadastrar um novo cartão de crédito', () => {
-
     cy.fillCardForm(myCard)
-
-    cy.get(`[data-cy="bank-${myCard.bank}"]`).click()
 
     cy.intercept('POST', 'http://wallet.cardfify.dev/api/cards', (req) => {
       req.reply({
@@ -75,35 +71,33 @@ describe('<AddCard />', () => {
     }).as('addCard')
 
     cy.submitCardForm()
+
     cy.wait('@addCard')
+
     cy.get('.notice-success')
       .should('be.visible')
       .and('have.text', 'Cartão cadastrado com sucesso!')
   })
+
   it('valida nome do titular com nome contendo menos que 2 caracteres', () => {
- 
     cy.fillCardForm({...myCard , holderName: 'F'})
-
-    cy.get(`[data-cy="bank-${myCard.bank}"]`).click()
-
     cy.submitCardForm()
-
     cy.alertErrorHaveText('Nome deve ter pelo menos 2 caracteres')
+
   })
-  it('valida nome do titular com nome contendo menos que 2 caracteres', () => {
-
+  it('validar data de expiracão invalida', () => {
     cy.fillCardForm({...myCard , expirationDate:'22/35'})
-
     cy.submitCardForm()
 
     cy.alertErrorHaveText('Data de expiração inválida ou vencida')
   })
   it('valida cvv contendo menos que 3 caracteres', () => {
    
+    cy.alertErrorHaveText('Data de expiração inválida ou vencida')
+
+  })
+  it('valida CVV com menos de 3 dígitos', () => {
     cy.fillCardForm({...myCard , cvv:'7'})
-
-    cy.fillCardForm(myCard)
-
     cy.submitCardForm()
 
     cy.alertErrorHaveText('CVV deve ter 3 ou 4 dígitos')
